@@ -25,7 +25,7 @@ function docker_build_with_version {
   DOCKERFILE_PATH=$(perl -MCwd -e 'print Cwd::abs_path shift' $dockerfile)
   cp ${DOCKERFILE_PATH} "${DOCKERFILE_PATH}.version"
   git_version=$(git rev-parse --short HEAD)
-  echo "LABEL io.meros.builder-version=\"${git_version}\"" >> "${dockerfile}.version"
+  echo "LABEL io.deploydock.builder-version=\"${git_version}\"" >> "${dockerfile}.version"
   docker build -t ${IMAGE_NAME} -f "${dockerfile}.version" .
   if [[ "${SKIP_SQUASH}" != "1" ]]; then
     squash "${dockerfile}.version"

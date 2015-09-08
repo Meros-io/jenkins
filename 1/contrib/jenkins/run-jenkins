@@ -22,7 +22,7 @@ function obfuscate_password {
     local acegi_security_path=`find /tmp/war/WEB-INF/lib/ -name acegi-security-*.jar`
     local commons_codec_path=`find /tmp/war/WEB-INF/lib/ -name commons-codec-*.jar`
 
-    java -classpath "${acegi_security_path}:${commons_codec_path}:/opt/deploydock/password-encoder.jar" io.meros.deploydock.PasswordEncoder $password
+    java -classpath "${acegi_security_path}:${commons_codec_path}:/opt/deploydock/password-encoder.jar" io.deploydock.deploydock.PasswordEncoder $password
 }
 
 # Since DeployDock runs this Docker image under random user ID, we have to assign
