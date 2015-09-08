@@ -8,20 +8,20 @@
       <parameterDefinitions>
 
         <hudson.model.StringParameterDefinition>
-          <name>OPENSHIFT_API_URL</name>
-          <description>URL of the OpenShift api endpoint.</description>
-          <defaultValue>https://openshift.default.svc.cluster.local</defaultValue>
+          <name>DEPLOYDOCK_API_URL</name>
+          <description>URL of the DeployDock api endpoint.</description>
+          <defaultValue>https://deploydock.default.svc.cluster.local</defaultValue>
         </hudson.model.StringParameterDefinition>
 
         <hudson.model.TextParameterDefinition>
           <name>AUTH_TOKEN</name>
-          <description>Authentication token of an account/serviceaccount for accessing the project to run builds and tag images.  If you are running Jenkins in the same OpenShift deployment that it is communicating with and you have granted appropriate roles to the service account for the pod (normally "default"), you can leave this blank.</description>
+          <description>Authentication token of an account/serviceaccount for accessing the project to run builds and tag images.  If you are running Jenkins in the same DeployDock deployment that it is communicating with and you have granted appropriate roles to the service account for the pod (normally "default"), you can leave this blank.</description>
           <defaultValue></defaultValue>
         </hudson.model.TextParameterDefinition>
         
         <hudson.model.StringParameterDefinition>
           <name>PROJECT</name>
-          <description>The OpenShift project this job will access</description>
+          <description>The DeployDock project this job will access</description>
           <defaultValue>test</defaultValue>
         </hudson.model.StringParameterDefinition>
         
@@ -34,13 +34,13 @@
         <hudson.model.StringParameterDefinition>
           <name>TEST_IMAGE_TAG</name>
           <description>The image:tag produced by the BuildConfig which will be tagged for promotion if the tests are successful.</description>
-          <defaultValue>origin-nodejs-sample:latest</defaultValue>
+          <defaultValue>deploydock-nodejs-sample:latest</defaultValue>
         </hudson.model.StringParameterDefinition>
 
         <hudson.model.StringParameterDefinition>
           <name>PRODUCTION_IMAGE_TAG</name>
           <description>The tag to apply to the tested image to trigger a production deployment.</description>
-          <defaultValue>origin-nodejs-sample:prod</defaultValue>
+          <defaultValue>deploydock-nodejs-sample:prod</defaultValue>
         </hudson.model.StringParameterDefinition>
 
         <hudson.model.StringParameterDefinition>
@@ -73,9 +73,9 @@ if [ -z &quot;$AUTH_TOKEN&quot; ]; then
 fi
 
 if [ -e /run/secrets/kubernetes.io/serviceaccount/ca.crt ]; then
-  alias oc=&quot;oc -n $PROJECT --token=$AUTH_TOKEN --server=$OPENSHIFT_API_URL --certificate-authority=/run/secrets/kubernetes.io/serviceaccount/ca.crt &quot;
+  alias oc=&quot;oc -n $PROJECT --token=$AUTH_TOKEN --server=$DEPLOYDOCK_API_URL --certificate-authority=/run/secrets/kubernetes.io/serviceaccount/ca.crt &quot;
 else 
-  alias oc=&quot;oc -n $PROJECT --token=$AUTH_TOKEN --server=$OPENSHIFT_API_URL --insecure-skip-tls-verify &quot;
+  alias oc=&quot;oc -n $PROJECT --token=$AUTH_TOKEN --server=$DEPLOYDOCK_API_URL --insecure-skip-tls-verify &quot;
 fi
 
 TEST_ENDPOINT=`oc get service ${SERVICE} -t &apos;{{.spec.clusterIP}}{{&quot;:&quot;}}{{ $a:= index .spec.ports 0 }}{{$a.port}}&apos;`

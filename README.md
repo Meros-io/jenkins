@@ -1,11 +1,11 @@
 Jenkins Docker Image
 ====================
 
-This repository contains Dockerfiles for a Jenkins Docker image intended for use with [OpenShift v3](https://github.com/openshift/origin)
+This repository contains Dockerfiles for a Jenkins Docker image intended for use with [DeployDock](https://github.com/Meros-io/deploydock)
 
-For an example of how to use it, [see this sample.](https://github.com/openshift/origin/blob/master/examples/jenkins/README.md)
+For an example of how to use it, [see this sample.](https://github.com/Meros-io/deploydock/blob/master/examples/jenkins/README.md)
 
-The image is pushed to DockerHub as openshift/jenkins-1-centos7.
+The image is pushed to DockerHub as deploydock/jenkins-1-centos7.
 
 Versions
 ---------------------------------
@@ -29,7 +29,7 @@ Choose either the CentOS7 or RHEL7 based image:
     subscribed RHEL machine.
 
     ```
-    $ git clone https://github.com/openshift/jenkins.git
+    $ git clone https://github.com/Meros-io/jenkins.git
     $ cd jenkins
     $ make build TARGET=rhel7 VERSION=1
     ```
@@ -39,13 +39,13 @@ Choose either the CentOS7 or RHEL7 based image:
 	This image is available on DockerHub. To download it run:
 
 	```
-	$ docker pull openshift/jenkins-1-centos7
+	$ docker pull deploydock/jenkins-1-centos7
 	```
 
 	To build a Jenkins image from scratch run:
 
 	```
-	$ git clone https://github.com/openshift/jenkins.git
+	$ git clone https://github.com/Meros-io/jenkins.git
 	$ cd jenkins
 	$ make build VERSION=1
 	```
@@ -81,16 +81,16 @@ matches the user UID or name which is running inside the container.**
 Plugins
 ---------------------------------
 
-In order to install additional Jenkins plugins, the OpenShift Jenkins image provides a way
+In order to install additional Jenkins plugins, the DeployDock Jenkins image provides a way
 how to add those by layering on top of this image. The derived image, will provide the same functionality
 as described in this documentation, in addition it will also include all plugins you list in the `plugins.txt` file.
 
 To create derived image, you have to write following `Dockerfile`:
 
 ```
-FROM openshift/jenkins-1-centos7
-COPY plugins.txt /opt/openshift/configuration/plugins.txt
-RUN /usr/local/bin/plugins.sh /opt/openshift/configuration/plugins.txt
+FROM deploydock/jenkins-1-centos7
+COPY plugins.txt /opt/deploydock/configuration/plugins.txt
+RUN /usr/local/bin/plugins.sh /opt/deploydock/configuration/plugins.txt
 ```
 
 The format of `plugins.txt` file is:
@@ -110,12 +110,12 @@ After this, just run `docker build -t my_jenkins_image -f Dockerfile`.
 Usage
 ---------------------------------
 
-For this, we will assume that you are using the `openshift/jenkins-1-centos7` image.
+For this, we will assume that you are using the `deploydock/jenkins-1-centos7` image.
 If you want to set only the mandatory environment variables and store the database
 in the `/tmp/jenkins` directory on the host filesystem, execute the following command:
 
 ```
-$ docker run -d -e JENKINS_PASSWORD=<password> -v /tmp/jenkins:/var/lib/jenkins openshift/jenkins-1-centos7
+$ docker run -d -e JENKINS_PASSWORD=<password> -v /tmp/jenkins:/var/lib/jenkins deploydock/jenkins-1-centos7
 ```
 
 

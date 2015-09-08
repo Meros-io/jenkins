@@ -5,7 +5,7 @@
 #
 # Usage:
 #
-# FROM openshift/jenkins-1-centos7
+# FROM deploydock/jenkins-1-centos7
 # COPY plugins.txt /plugins.txt
 # RUN /usr/local/bin/plugins.sh /plugins.txt
 #
@@ -18,7 +18,7 @@ set -e
 # TODO: Move this Dockerfile
 JENKINS_UC=${JENKINS_UC:-https://updates.jenkins-ci.org}
 DOWNLOAD_JOBS=()
-mkdir -p /opt/openshift/plugins
+mkdir -p /opt/deploydock/plugins
 mkdir -p /tmp/.plugin-download
 
 while read spec || [ -n "$spec" ]; do
@@ -33,7 +33,7 @@ while read spec || [ -n "$spec" ]; do
 
     name="${plugin[0]}-${plugin[1]}"
     curl -sSL -f ${JENKINS_UC_DOWNLOAD}/plugins/${plugin[0]}/${plugin[1]}/${plugin[0]}.hpi \
-      -o /opt/openshift/plugins/${plugin[0]}.jpi &> /tmp/.plugin-download/${name}.log &
+      -o /opt/deploydock/plugins/${plugin[0]}.jpi &> /tmp/.plugin-download/${name}.log &
     DOWNLOAD_JOBS+=("$!:${name}")
 done  < $1
 
@@ -55,4 +55,4 @@ done
 
 # Cleanup and make the plugins world writeable
 rm -rf /tmp/.plugin-download
-chmod -R og+rw /opt/openshift/plugins
+chmod -R og+rw /opt/deploydock/plugins

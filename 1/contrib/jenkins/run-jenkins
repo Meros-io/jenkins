@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # This script runs the Jenkins server inside the Docker container.
-# It copies the configuration and plugins from /opt/openshift/configuration to
+# It copies the configuration and plugins from /opt/deploydock/configuration to
 # ${JENKINS_HOME}.
 #
 # It also sets the admin password to ${JENKINS_PASSWORD}.
@@ -11,9 +11,9 @@
 function generate_passwd_file() {
   export USER_ID=$1
   export GROUP_ID=$2
-  envsubst < /opt/openshift/passwd.template > /opt/openshift/passwd
+  envsubst < /opt/deploydock/passwd.template > /opt/deploydock/passwd
   export LD_PRELOAD=libnss_wrapper.so
-  export NSS_WRAPPER_PASSWD=/opt/openshift/passwd
+  export NSS_WRAPPER_PASSWD=/opt/deploydock/passwd
   export NSS_WRAPPER_GROUP=/etc/group
 }
 
@@ -22,10 +22,10 @@ function obfuscate_password {
     local acegi_security_path=`find /tmp/war/WEB-INF/lib/ -name acegi-security-*.jar`
     local commons_codec_path=`find /tmp/war/WEB-INF/lib/ -name commons-codec-*.jar`
 
-    java -classpath "${acegi_security_path}:${commons_codec_path}:/opt/openshift/password-encoder.jar" com.redhat.openshift.PasswordEncoder $password
+    java -classpath "${acegi_security_path}:${commons_codec_path}:/opt/deploydock/password-encoder.jar" io.meros.deploydock.PasswordEncoder $password
 }
 
-# Since OpenShift runs this Docker image under random user ID, we have to assign
+# Since DeployDock runs this Docker image under random user ID, we have to assign
 # the 'jenkins' user name to this UID. For that we use nss_wrapper and
 # passwd.template.
 # If you adding more layers to this Docker image and the layer you adding add
@@ -38,14 +38,14 @@ new_password_hash=`obfuscate_password ${JENKINS_PASSWORD:-password}`
 
 if [ ! -e ${JENKINS_HOME}/configured ]; then
   echo "Copying Jenkins configuration to ${JENKINS_HOME} ..."
-  cp -r /opt/openshift/configuration/* ${JENKINS_HOME}
-  rm -rf /opt/openshift/configuration/*
+  cp -r /opt/deploydock/configuration/* ${JENKINS_HOME}
+  rm -rf /opt/deploydock/configuration/*
 
-  if [ "$(ls -A /opt/openshift/plugins)" ]; then
+  if [ "$(ls -A /opt/deploydock/plugins)" ]; then
     mkdir -p ${JENKINS_HOME}/plugins
-    echo "Copying $(ls /opt/openshift/plugins | wc -l) Jenkins plugins to ${JENKINS_HOME} ..."
-    cp -r /opt/openshift/plugins/* ${JENKINS_HOME}/plugins/
-    rm -rf /opt/openshift/plugins
+    echo "Copying $(ls /opt/deploydock/plugins | wc -l) Jenkins plugins to ${JENKINS_HOME} ..."
+    cp -r /opt/deploydock/plugins/* ${JENKINS_HOME}/plugins/
+    rm -rf /opt/deploydock/plugins
   fi
 
   echo "Creating initial Jenkins 'admin' user"
